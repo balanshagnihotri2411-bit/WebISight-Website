@@ -1,0 +1,14 @@
+{
+  "name": "webisight",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebISight - Website Readiness & AI Discoverability Analyzer",
+  "scripts": {
+    "start:server": "npm --prefix server start",
+    "start:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "test": "npm --prefix server test",
+    "build": "npm --prefix client run build"
+  }
+}
