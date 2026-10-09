@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: webisight
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AUDIT_TIMEOUT_SECONDS
+        value: "30"
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "30"
+      - key: MAX_RESPONSE_BYTES
+        value: "5242880"
+      - key: CACHE_TTL_SECONDS
+        value: "300"
