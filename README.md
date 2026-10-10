@@ -22,7 +22,7 @@
 - [Audit Skills](#audit-skills)
 - [Adding a New Skill](#adding-a-new-skill)
 - [Testing](#testing)
-- [Docker Deployment](#docker-deployment)
+- [Production Deployment](#production-deployment)
 - [Why No Database?](#why-no-database)
 
 ---
@@ -38,7 +38,7 @@
 - 💾 **Download / Upload** — save reports as JSON; reload and view them later
 - 🕘 **Recent audits** — last 5 audits stored in browser localStorage only
 - 🔒 **Rate limiting** — configurable req/min per IP; helmet security headers
-- 🐳 **Docker-ready** — multi-stage build, non-root user, health check
+- 🚀 **Simple & Lightweight** — pure Node.js & React stack, no Docker or database required
 
 ---
 
@@ -83,30 +83,40 @@
 - Node.js 20+
 - npm 9+
 
-### Development (two terminals)
+### Quick Start (Single Command)
 
 ```bash
-# Terminal 1 — start the Express API server
-cd server
-npm install
-npm run dev    # listens on http://localhost:3001
+# 1. Install dependencies for all packages
+npm run setup
 
-# Terminal 2 — start the React dev server
-cd client
-npm install
-npm run dev    # listens on http://localhost:5173 (proxies /api → :3001)
+# 2. Run both backend and frontend concurrently
+npm run dev
 ```
 
 Open **http://localhost:5173** in your browser.
 
-### Production (single process)
+### Development (Separate Terminals)
+
+If you prefer separate processes:
+
+```bash
+# Terminal 1 — start the Express API server
+npm run dev:server    # listens on http://localhost:3001
+
+# Terminal 2 — start the React dev server
+npm run dev:client    # listens on http://localhost:5173 (proxies /api → :3001)
+```
+
+Open **http://localhost:5173** in your browser.
+
+### Production (Single Process)
 
 ```bash
 # Build the client
-cd client && npm run build
+npm run build
 
-# Start the server (serves built client too)
-cd ../server && NODE_ENV=production npm start
+# Start the server (serves built client on port 3001)
+npm start
 ```
 
 Open **http://localhost:3001**.
@@ -124,7 +134,7 @@ All variables are configured in `server/.env` (copy from `.env.example`):
 | `RATE_LIMIT_PER_MINUTE` | `20` | Max audit requests per IP per minute |
 | `MAX_RESPONSE_BYTES` | `5242880` | Max response body size to fetch (5 MB) |
 | `CACHE_TTL_SECONDS` | `300` | In-memory cache TTL (5 minutes) |
-| `NODE_ENV` | `development` | Set to `production` in Docker |
+| `NODE_ENV` | `development` | Set to `production` in production mode |
 | `CLIENT_URL` | `http://localhost:5173` | CORS origin in development |
 
 ---
@@ -288,30 +298,24 @@ npm run test:coverage # with coverage report
 
 ---
 
-## Docker Deployment
+## Production Deployment
 
-### Build and run with Docker Compose
+WebISight runs directly on any standard Node.js environment (VPS, Render, Railway, Fly.io, etc.) without needing Docker:
+
+### Build and Run
 
 ```bash
-docker compose up --build
+# Install dependencies
+npm run setup
+
+# Build client production bundle
+npm run build
+
+# Start the Express server (serves the frontend on port 3001)
+npm start
 ```
 
 The app will be available at **http://localhost:3001**.
-
-### Manual Docker build
-
-```bash
-docker build -t webisight .
-docker run -p 3001:3001 \
-  -e NODE_ENV=production \
-  -e AUDIT_TIMEOUT_SECONDS=30 \
-  webisight
-```
-
-The Dockerfile uses a **multi-stage build**:
-1. **`client-builder`** — builds the React app with Vite
-2. **`server-deps`** — installs production-only server dependencies
-3. **`production`** — combines both into a minimal Alpine image; runs as a non-root user (`webisight`)
 
 ---
 
@@ -378,7 +382,6 @@ project87/
 │   │       └── RecentAudits.jsx
 │   └── vite.config.js
 │
-├── Dockerfile                        # Multi-stage build
-├── docker-compose.yml
+├── package.json                      # Root scripts (setup, dev, build, start)
 └── README.md
 ```

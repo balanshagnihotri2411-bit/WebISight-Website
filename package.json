@@ -4,11 +4,17 @@
   "private": true,
   "description": "WebISight - Website Readiness & AI Discoverability Analyzer",
   "scripts": {
-    "start:server": "npm --prefix server start",
-    "start:client": "npm --prefix client run dev",
+    "setup": "npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\" --names \"server,client\" --prefix-colors \"blue,magenta\"",
     "dev:server": "npm --prefix server run dev",
     "dev:client": "npm --prefix client run dev",
-    "test": "npm --prefix server test",
-    "build": "npm --prefix client run build"
+    "build": "npm --prefix client run build",
+    "start": "npm --prefix server start",
+    "start:server": "npm --prefix server start",
+    "start:client": "npm --prefix client run dev",
+    "test": "npm --prefix server test"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.6"
   }
 }
